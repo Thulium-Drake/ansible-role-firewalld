@@ -1,0 +1,17 @@
+---
+# Allowed services, defaults come from a RHEL8 installation
+firewalld_services:
+  - 'cockpit'
+  - 'dhcpv6-client'
+  - 'ssh'
+
+# Allowed non-service ports
+firewalld_ports: []
+#  - '443/tcp'
+#  - '161-162/udp'
+
+firewalld_rich_rules: []
+# - 'rule family=ipv4 forward-port port=443 protocol=tcp to-port=8443'
+
+# Clear out any opened ports and/or services that are not defined by this role
+firewalld_prune_unknown: true

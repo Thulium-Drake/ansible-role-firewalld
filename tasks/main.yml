@@ -1,0 +1,85 @@
+---
+- name: 'Ensure FirewallD is running'
+  ansible.builtin.service:
+    name: 'firewalld'
+    state: 'started'
+
+- name: 'Collect current FirewallD configuration'
+  ansible.posix.firewalld_info:
+    active_zones: true
+  register: 'firewalld_config'
+
+- name: "Check if 'public' is the only active zone"
+  ansible.builtin.assert:
+    that:
+      - firewalld_config['firewalld_info']['zones']['public'] is defined
+      - firewalld_config['firewalld_info']['zones'] | length == 1
+    success_msg: 'This is a FirewallD config I can work with'
+    fail_msg: 'ERROR: Unsupported FirewallD configuration detected, please check the documentation'
+
+- name: 'Clear out unknown open ports'
+  when: firewalld_prune_unknown
+  block:
+    - name: "Remove all unknown services from 'public' zone"
+      ansible.posix.firewalld:
+        service: "{{ service }}"
+        state: 'disabled'
+        immediate: true
+        permanent: true
+      when: service not in firewalld_services
+      loop: "{{ firewalld_config['firewalld_info']['zones']['public']['services'] }}"
+      loop_control:
+        loop_var: 'service'
+
+    - name: "Remove all unknown ports from 'public' zone"
+      ansible.posix.firewalld:
+        port: "{{ port[0] }}/{{ port[1] }}"  # For some reason the info module reports these weird
+        state: 'disabled'
+        immediate: true
+        permanent: true
+      when: port not in firewalld_ports
+      loop: "{{ firewalld_config['firewalld_info']['zones']['public']['ports'] }}"
+      loop_control:
+        loop_var: 'port'
+
+    - name: "Remove all unknown rich rules from 'public' zone"
+      ansible.posix.firewalld:
+        rich_rule: "{{ rule }}"
+        state: 'disabled'
+        immediate: true
+        permanent: true
+      when: rule not in firewalld_rich_rules
+      loop: "{{ firewalld_config['firewalld_info']['zones']['public']['rich_rules'] }}"
+      loop_control:
+        loop_var: 'rule'
+
+- name: 'Ensure services'
+  ansible.posix.firewalld:
+    service: "{{ service }}"
+    state: 'enabled'
+    immediate: true
+    permanent: true
+  loop: "{{ firewalld_services }}"
+  loop_control:
+    loop_var: 'service'
+
+- name: 'Ensure ports'
+  ansible.posix.firewalld:
+    port: "{{ port }}"
+    state: 'enabled'
+    immediate: true
+    permanent: true
+  loop: "{{ firewalld_ports }}"
+  loop_control:
+    loop_var: 'port'
+
+- name: "Remove all unknown rich rules from 'public' zone"
+  ansible.posix.firewalld:
+    rich_rule: "{{ rule }}"
+    state: 'enabled'
+    immediate: true
+    permanent: true
+  when: rule not in firewalld_rich_rules
+  loop: "{{ firewalld_rich_rules }}"
+  loop_control:
+    loop_var: 'rule'
