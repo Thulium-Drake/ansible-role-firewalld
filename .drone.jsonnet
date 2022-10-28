@@ -1,22 +1,3 @@
-local Converge(distro) = {
-  name: "Converge - "+distro,
-  image: "registry.element-networks.nl/tools/molecule",
-  failure: "ignore",
-  commands: [
-    "molecule destroy",
-    "molecule converge",
-    "molecule idempotence",
-    "molecule verify",
-    "molecule destroy",
-  ],
-  environment:
-    { MOLECULE_DISTRO: distro, },
-  privileged: true,
-  volumes: [
-    { name: "docker", path: "/var/run/docker.sock" },
-  ],
-};
-
 [
   {
     name: "Lint",
@@ -43,24 +24,6 @@ local Converge(distro) = {
     ],
   },
   {
-    kind: "pipeline",
-    name: "Test",
-    steps: [
-      Converge("debian10"),
-      Converge("ubuntu1804"),
-      Converge("centos7"),
-    ],
-    volumes: [
-      { name: "docker",
-        host: { path: "/var/run/docker.sock" }
-      },
-    ],
-
-    depends_on: [
-      "Lint",
-    ],
-  },
-  {
     name: "Publish",
     kind: "pipeline",
     clone:
@@ -70,14 +33,14 @@ local Converge(distro) = {
         name: "Ansible Galaxy",
         image: "registry.element-networks.nl/tools/molecule",
         commands: [
-          "ansible-galaxy import --token $$GALAXY_TOKEN Thulium-Drake ansible-role-empty --role-name=empty",
+          "ansible-galaxy import --token $$GALAXY_TOKEN Thulium-Drake ansible-role-firewalld --role-name=firewalld",
         ],
         environment:
           { GALAXY_TOKEN: { from_secret: "galaxy_token" } },
       },
     ],
     depends_on: [
-      "Test",
+      "Lint",
     ],
   },
 ]
