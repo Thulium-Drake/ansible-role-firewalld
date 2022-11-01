@@ -7,7 +7,7 @@ By default it will clear out any configuration that is not defined in Ansible, w
 
 Limitations:
 
-* Currently the role only supports the default 'public' zone, it will check if public is the only current active zone. If it is not, it will error out.
+* Currently the role only supports the default 'public' zone, it will check if public the active zone for the default network interface. If it is not, it will error out. This behaviour should be compatible with Podman or other container engines, but is not extensively tested.
 * The role does not support direct rules in FirewallD, as the Ansible modules used also do not support them.
 
 # Usage

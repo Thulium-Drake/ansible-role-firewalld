@@ -9,11 +9,11 @@
     active_zones: true
   register: 'firewalld_config'
 
-- name: "Check if 'public' is the only active zone"
+- name: "Check if 'public' is the active zone for the default network interface"
   ansible.builtin.assert:
     that:
       - firewalld_config['firewalld_info']['zones']['public'] is defined
-      - firewalld_config['firewalld_info']['zones'] | length == 1
+      - ansible_facts['default_ipv4']['interface'] in firewalld_config['firewalld_info']['zones']['public']['interfaces']
     success_msg: 'This is a FirewallD config I can work with'
     fail_msg: 'ERROR: Unsupported FirewallD configuration detected, please check the documentation'
 
