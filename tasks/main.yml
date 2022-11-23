@@ -59,6 +59,7 @@
         permanent: true
       when:
         - service not in firewalld_services
+        - service != 'ssh'
       loop: "{{ firewalld_config['firewalld_info']['zones']['public']['services'] }}"
       loop_control:
         loop_var: 'service'
