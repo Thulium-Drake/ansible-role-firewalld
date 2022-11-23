@@ -3,7 +3,7 @@
 firewalld_services:
   - 'cockpit'
   - 'dhcpv6-client'
-  - 'ssh'
+  - 'ssh'  # Also hardcoded by this role to prevent lockouts
 
 # Allowed non-service ports
 firewalld_ports: []
