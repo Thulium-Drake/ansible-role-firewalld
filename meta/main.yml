@@ -2,17 +2,16 @@
 galaxy_info:
   author: thulium_drake
   description: Statefull FirewallD configuration, powered by Ansible
-  company:
   role_name: firewalld
 
   license: GPLv3
 
-  min_ansible_version: 2.12
+  min_ansible_version: '2.12'
 
   platforms:
     - name: EL
       versions:
-        - 8
+        - '8'
 
   galaxy_tags:
     - firewalld
