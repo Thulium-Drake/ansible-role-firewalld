@@ -15,3 +15,6 @@ firewalld_rich_rules: []
 
 # Clear out any opened ports and/or services that are not defined by this role
 firewalld_prune_unknown: true
+
+# If a system has a custom config that you know of, it will no longer be reported as change
+firewalld_custom_config_known: false
