@@ -22,7 +22,7 @@
     msg: 'This FirewallD config has multiple zones defined, the configuration you want to manage might cause unforseen consequences.'
   when:
     - firewalld_config['firewalld_info']['zones'] | length > 1
-  changed_when: "{{ not firewalld_custom_config_known }}"
+  changed_when: not firewalld_custom_config_known
 
 - name: 'Ensure services'
   ansible.posix.firewalld:
