@@ -5,6 +5,8 @@ It will check the current running configuration and add/remove services, ports a
 
 By default it will clear out any configuration that is not defined in Ansible, which will allow maintaining a firewall policy even when it is changed by (end-)admins. This behaviour can also be disabled.
 
+NOTE: when configured to remove unknown configuration it will also remove 'protocols' from the public zone. Enabling a protocol can negate the complete firewall configuration maintained by this role.
+
 Limitations:
 
 * Currently the role only supports the default 'public' zone, it will check if public the active zone for the default network interface. If it is not, it will error out. This behaviour should be compatible with Podman or other container engines, but is not extensively tested.

@@ -92,3 +92,13 @@
       loop: "{{ firewalld_config['firewalld_info']['zones']['public']['rich_rules'] }}"
       loop_control:
         loop_var: 'rule'
+
+    - name: "Remove all protocols from 'public' zone"
+      ansible.posix.firewalld:
+        protocol: "{{ protocol }}"
+        state: 'disabled'
+        immediate: true
+        permanent: true
+      loop: "{{ firewalld_config['firewalld_info']['zones']['public']['protocols'] }}"
+      loop_control:
+        loop_var: 'protocol'
