@@ -1,4 +1,9 @@
 ---
+- name: 'Ensure FirewallD is installed'
+  ansible.builtin.package:
+    name: 'firewalld'
+    state: 'present'
+
 - name: 'Ensure FirewallD is running'
   ansible.builtin.service:
     name: 'firewalld'
