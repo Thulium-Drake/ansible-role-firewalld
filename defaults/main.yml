@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 # Allowed services, defaults come from a RHEL8 installation
 firewalld_services:
   - 'cockpit'
@@ -16,5 +17,18 @@ firewalld_rich_rules: []
 # Clear out any opened ports and/or services that are not defined by this role
 firewalld_prune_unknown: true
 
-# If a system has a custom config that you know of, it will no longer be reported as change
-firewalld_custom_config_known: false
+# Firewall zone configuration structure
+# The default configuration is combined from the config items above, but you
+# can have Ansible compose a similar structure with the following lookup:
+#
+# firewalld_zones: "{{ lookup('community.general.merge_variables', '_firewalld_zones__to_merge', pattern_type='suffix') | dict2items(key_name='zone', value_name='config') }}"
+#
+# You can find an example of this setup in molecule/default/converge.yml
+firewalld_zones:
+  - zone: 'public'
+    config:
+      services: "{{ firewalld_services }}"
+      ports: "{{ firewalld_ports }}"
+      rich_rules: "{{ firewalld_rich_rules }}"
+      interfaces:
+        - "{{ ansible_facts['default_ipv4']['interface'] }}"

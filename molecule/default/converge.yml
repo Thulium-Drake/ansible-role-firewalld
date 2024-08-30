@@ -1,6 +1,31 @@
 ---
+# yamllint disable rule:line-length
 - name: 'Converge'
   hosts: 'all'
+  vars:
+    global_firewalld_zones__to_merge:
+      public:
+        services:
+          - 'ssh'
+          - 'http'
+        ports:
+          - '10050/tcp'
+        sources:
+          - '10.0.0.0/8'
+    dhcpd_firewalld_zones__to_merge:
+      public:
+        services:
+          - 'dhcp'
+        sources:
+          - '11.0.0.0/8'
+    extra_zone_firewalld_zones__to_merge:
+      management:
+        services:
+          - 'https'
+        sources:
+          - '192.168.1.0/24'
+          - '192.168.2.0/24'
+    firewalld_zones: "{{ lookup('community.general.merge_variables', '_firewalld_zones__to_merge', pattern_type='suffix') | dict2items(key_name='zone', value_name='config') }}"
   tasks:
     - name: 'Run role'
       ansible.builtin.import_role:

@@ -1,0 +1,77 @@
+---
+- name: 'Ensure zone'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    immediate: false
+    permanent: true
+    state: 'present'
+  register: 'zone_created'
+
+- name: 'Ensure zone target'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    target: "{{ zone['config']['target'] | default('default') }}"
+    permanent: true
+    state: 'present'
+  register: 'zone_target'
+
+- name: 'Reload config'
+  ansible.builtin.command: firewall-cmd --reload
+  changed_when: true
+  when: zone_created['changed'] or zone_target['changed']
+
+- name: 'Ensure interfaces'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    interface: "{{ interface }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  loop: "{{ zone['config']['interfaces'] | default([]) }}"
+  loop_control:
+    loop_var: 'interface'
+
+- name: 'Ensure services'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    service: "{{ service }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  loop: "{{ zone['config']['services'] + ['ssh'] }}"
+  loop_control:
+    loop_var: 'service'
+
+- name: 'Ensure ports'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    port: "{{ port }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  loop: "{{ zone['config']['ports'] | default([]) }}"
+  loop_control:
+    loop_var: 'port'
+
+- name: 'Ensure rich rules'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    rich_rule: "{{ rule }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  when: rule not in firewalld_rich_rules
+  loop: "{{ zone['config']['rich_rules'] | default([]) }}"
+  loop_control:
+    loop_var: 'rule'
+
+- name: 'Ensure source networks'
+  ansible.posix.firewalld:
+    zone: "{{ zone['zone'] }}"
+    source: "{{ sources }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  loop: "{{ zone['config']['sources'] | default([]) }}"
+  loop_control:
+    loop_var: 'sources'

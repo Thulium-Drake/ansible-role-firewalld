@@ -1,0 +1,61 @@
+---
+- name: "Remove all unknown services from zone"
+  ansible.posix.firewalld:
+    service: "{{ service }}"
+    zone: "{{ zone['zone'] }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  when:
+    - service not in zone['config']['services']
+    - service != 'ssh'
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['services'] }}"
+  loop_control:
+    loop_var: 'service'
+
+- name: "Remove all unknown ports from zone"
+  ansible.posix.firewalld:
+    port: "{{ port[0] }}/{{ port[1] }}"  # For some reason the info module reports these weird
+    zone: "{{ zone['zone'] }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  when: port[0] + '/' + port[1] not in zone['config']['ports']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['ports'] }}"
+  loop_control:
+    loop_var: 'port'
+
+- name: "Remove all unknown rich rules from zone"
+  ansible.posix.firewalld:
+    rich_rule: "{{ rule }}"
+    zone: "{{ zone['zone'] }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  when: rule not in zone['config']['rich_rules']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['rich_rules'] }}"
+  loop_control:
+    loop_var: 'rule'
+
+- name: "Remove all protocols from zone"
+  ansible.posix.firewalld:
+    protocol: "{{ protocol }}"
+    zone: "{{ zone['zone'] }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['protocols'] }}"
+  loop_control:
+    loop_var: 'protocol'
+
+- name: "Remove all unknown sources from zone"
+  ansible.posix.firewalld:
+    source: "{{ source }}"
+    zone: "{{ zone['zone'] }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  when: source not in zone['config']['sources']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['sources'] }}"
+  loop_control:
+    loop_var: 'source'
