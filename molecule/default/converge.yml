@@ -3,8 +3,10 @@
 - name: 'Converge'
   hosts: 'all'
   vars:
+    # Please note that the config below makes no sense at all, it's just used to test the role's functions
     global_firewalld_zones__to_merge:
       public:
+        target: 'DROP'
         services:
           - 'ssh'
           - 'http'
@@ -20,6 +22,7 @@
           - '11.0.0.0/8'
     extra_zone_firewalld_zones__to_merge:
       management:
+        target: 'ACCEPT'
         services:
           - 'https'
         sources:
