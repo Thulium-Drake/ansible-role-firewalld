@@ -28,6 +28,8 @@
         sources:
           - '192.168.1.0/24'
           - '192.168.2.0/24'
+        rich_rules:
+          - 'rule family="ipv4" forward-port port="80" protocol="tcp" to-port="8080" to-addr="192.168.3.12"'
     firewalld_zones: "{{ lookup('community.general.merge_variables', '_firewalld_zones__to_merge', pattern_type='suffix') | dict2items(key_name='zone', value_name='config') }}"
   tasks:
     - name: 'Run role'

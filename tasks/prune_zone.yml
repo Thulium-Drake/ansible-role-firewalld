@@ -1,5 +1,5 @@
 ---
-- name: "Remove all unknown services from zone"
+- name: "{{ zone['zone'] }} - Remove all unknown services from zone"  # noqa name[template]
   ansible.posix.firewalld:
     service: "{{ service }}"
     zone: "{{ zone['zone'] }}"
@@ -13,7 +13,7 @@
   loop_control:
     loop_var: 'service'
 
-- name: "Remove all unknown ports from zone"
+- name: "{{ zone['zone'] }} - Remove all unknown ports from zone"  # noqa name[template]
   ansible.posix.firewalld:
     port: "{{ port[0] }}/{{ port[1] }}"  # For some reason the info module reports these weird
     zone: "{{ zone['zone'] }}"
@@ -25,7 +25,7 @@
   loop_control:
     loop_var: 'port'
 
-- name: "Remove all unknown rich rules from zone"
+- name: "{{ zone['zone'] }} - Remove all unknown rich rules from zone"  # noqa name[template]
   ansible.posix.firewalld:
     rich_rule: "{{ rule }}"
     zone: "{{ zone['zone'] }}"
@@ -37,7 +37,7 @@
   loop_control:
     loop_var: 'rule'
 
-- name: "Remove all protocols from zone"
+- name: "{{ zone['zone'] }} - Remove all protocols from zone"  # noqa name[template]
   ansible.posix.firewalld:
     protocol: "{{ protocol }}"
     zone: "{{ zone['zone'] }}"
@@ -48,7 +48,7 @@
   loop_control:
     loop_var: 'protocol'
 
-- name: "Remove all unknown sources from zone"
+- name: "{{ zone['zone'] }} - Remove all unknown sources from zone"  # noqa name[template]
   ansible.posix.firewalld:
     source: "{{ source }}"
     zone: "{{ zone['zone'] }}"
