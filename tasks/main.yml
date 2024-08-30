@@ -20,7 +20,6 @@
   block:
     - name: 'Collect current FirewallD configuration'
       ansible.posix.firewalld_info:
-        active_zones: true
       register: 'firewalld_config'
 
     - name: 'Prune zones'
