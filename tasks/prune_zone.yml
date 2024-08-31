@@ -1,61 +1,61 @@
 ---
-- name: "{{ zone['zone'] }} - Remove all unknown services from zone"  # noqa name[template]
+- name: "{{ zone }} - Remove all unknown services from zone"  # noqa name[template]
   ansible.posix.firewalld:
     service: "{{ service }}"
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     state: 'disabled'
     immediate: true
     permanent: true
   when:
-    - service not in zone['config']['services']
+    - service not in firewalld_zones[zone]['services']
     - service != 'ssh'
-  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['services'] }}"
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['services'] }}"
   loop_control:
     loop_var: 'service'
 
-- name: "{{ zone['zone'] }} - Remove all unknown ports from zone"  # noqa name[template]
+- name: "{{ zone }} - Remove all unknown ports from zone"  # noqa name[template]
   ansible.posix.firewalld:
     port: "{{ port[0] }}/{{ port[1] }}"  # For some reason the info module reports these weird
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     state: 'disabled'
     immediate: true
     permanent: true
-  when: port[0] + '/' + port[1] not in zone['config']['ports']
-  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['ports'] }}"
+  when: port[0] + '/' + port[1] not in firewalld_zones[zone]['ports']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['ports'] }}"
   loop_control:
     loop_var: 'port'
 
-- name: "{{ zone['zone'] }} - Remove all unknown rich rules from zone"  # noqa name[template]
+- name: "{{ zone }} - Remove all unknown rich rules from zone"  # noqa name[template]
   ansible.posix.firewalld:
     rich_rule: "{{ rule }}"
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     state: 'disabled'
     immediate: true
     permanent: true
-  when: rule not in zone['config']['rich_rules']
-  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['rich_rules'] }}"
+  when: rule not in firewalld_zones[zone]['rich_rules']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['rich_rules'] }}"
   loop_control:
     loop_var: 'rule'
 
-- name: "{{ zone['zone'] }} - Remove all protocols from zone"  # noqa name[template]
+- name: "{{ zone }} - Remove all protocols from zone"  # noqa name[template]
   ansible.posix.firewalld:
     protocol: "{{ protocol }}"
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     state: 'disabled'
     immediate: true
     permanent: true
-  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['protocols'] }}"
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['protocols'] }}"
   loop_control:
     loop_var: 'protocol'
 
-- name: "{{ zone['zone'] }} - Remove all unknown sources from zone"  # noqa name[template]
+- name: "{{ zone }} - Remove all unknown sources from zone"  # noqa name[template]
   ansible.posix.firewalld:
     source: "{{ source }}"
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     state: 'disabled'
     immediate: true
     permanent: true
-  when: source not in zone['config']['sources']
-  loop: "{{ firewalld_config['firewalld_info']['zones'][zone['zone']]['sources'] }}"
+  when: source not in firewalld_zones[zone]['sources']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['sources'] }}"
   loop_control:
     loop_var: 'source'

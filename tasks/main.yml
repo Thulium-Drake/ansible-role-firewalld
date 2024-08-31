@@ -11,7 +11,7 @@
 
 - name: 'Manage zones'
   ansible.builtin.include_tasks: 'tasks/manage_zone.yml'
-  loop: "{{ firewalld_zones }}"
+  loop: "{{ firewalld_zones.keys() }}"
   loop_control:
     loop_var: 'zone'
 
@@ -24,6 +24,6 @@
 
     - name: 'Prune zones'
       ansible.builtin.include_tasks: 'tasks/prune_zone.yml'
-      loop: "{{ firewalld_zones }}"
+      loop: "{{ firewalld_zones.keys() }}"
       loop_control:
         loop_var: 'zone'

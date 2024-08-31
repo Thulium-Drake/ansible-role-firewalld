@@ -1,84 +1,84 @@
 ---
-- name: "{{ zone['zone'] }} - Ensure zone"  # noqa name[template]
+- name: "{{ zone }} - Ensure zone"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     immediate: false
     permanent: true
     state: 'present'
   register: 'zone_created'
 
-- name: "{{ zone['zone'] }} - Ensure zone target"  # noqa name[template]
+- name: "{{ zone }} - Ensure zone target"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
-    target: "{{ zone['config']['target'] | default('default') }}"
+    zone: "{{ zone }}"
+    target: "{{ firewalld_zones[zone]['target'] | default('default') }}"
     permanent: true
     state: 'present'
   register: 'zone_target'
 
-- name: "{{ zone['zone'] }} - Ensure zone masquerading"  # noqa name[template]
+- name: "{{ zone }} - Ensure zone masquerading"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
-    masquerade: "{{ zone['config']['masquerade'] | default('false') }}"
+    zone: "{{ zone }}"
+    masquerade: "{{ firewalld_zones[zone]['masquerade'] | default('false') }}"
     permanent: true
     state: 'enabled'
   register: 'zone_masquerade'
 
-- name: "{{ zone['zone'] }} - Reload config"  # noqa name[template]
+- name: "{{ zone }} - Reload config"  # noqa name[template]
   ansible.builtin.command: firewall-cmd --reload
   changed_when: true
   when: zone_created['changed'] or zone_target['changed'] or zone_masquerade['changed']
 
-- name: "{{ zone['zone'] }} - Ensure interfaces"  # noqa name[template]
+- name: "{{ zone }} - Ensure interfaces"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     interface: "{{ interface }}"
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ zone['config']['interfaces'] | default([]) }}"
+  loop: "{{ firewalld_zones[zone]['interfaces'] | default([]) }}"
   loop_control:
     loop_var: 'interface'
 
-- name: "{{ zone['zone'] }} - Ensure services"  # noqa name[template]
+- name: "{{ zone }} - Ensure services"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     service: "{{ service }}"
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ zone['config']['services'] + ['ssh'] }}"
+  loop: "{{ firewalld_zones[zone]['services'] + ['ssh'] }}"
   loop_control:
     loop_var: 'service'
 
-- name: "{{ zone['zone'] }} - Ensure ports"  # noqa name[template]
+- name: "{{ zone }} - Ensure ports"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     port: "{{ port }}"
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ zone['config']['ports'] | default([]) }}"
+  loop: "{{ firewalld_zones[zone]['ports'] | default([]) }}"
   loop_control:
     loop_var: 'port'
 
-- name: "{{ zone['zone'] }} - Ensure rich rules"  # noqa name[template]
+- name: "{{ zone }} - Ensure rich rules"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     rich_rule: "{{ rule }}"
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ zone['config']['rich_rules'] | default([]) }}"
+  loop: "{{ firewalld_zones[zone]['rich_rules'] | default([]) }}"
   loop_control:
     loop_var: 'rule'
 
-- name: "{{ zone['zone'] }} - Ensure source networks"  # noqa name[template]
+- name: "{{ zone }} - Ensure source networks"  # noqa name[template]
   ansible.posix.firewalld:
-    zone: "{{ zone['zone'] }}"
+    zone: "{{ zone }}"
     source: "{{ sources }}"
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ zone['config']['sources'] | default([]) }}"
+  loop: "{{ firewalld_zones[zone]['sources'] | default([]) }}"
   loop_control:
     loop_var: 'sources'

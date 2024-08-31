@@ -21,14 +21,13 @@ firewalld_prune_unknown: true
 # The default configuration is combined from the config items above, but you
 # can have Ansible compose a similar structure with the following lookup:
 #
-# firewalld_zones: "{{ lookup('community.general.merge_variables', '_firewalld_zones__to_merge', pattern_type='suffix') | dict2items(key_name='zone', value_name='config') }}"
+# firewalld_zones: "{{ lookup('community.general.merge_variables', '_firewalld_zones__to_merge', pattern_type='suffix') }}"
 #
 # You can find an example of this setup in molecule/default/converge.yml
 firewalld_zones:
-  - zone: 'public'
-    config:
-      services: "{{ firewalld_services }}"
-      ports: "{{ firewalld_ports }}"
-      rich_rules: "{{ firewalld_rich_rules }}"
-      interfaces:
-        - "{{ ansible_facts['default_ipv4']['interface'] }}"
+  public:
+    services: "{{ firewalld_services }}"
+    ports: "{{ firewalld_ports }}"
+    rich_rules: "{{ firewalld_rich_rules }}"
+    interfaces:
+      - "{{ ansible_facts['default_ipv4']['interface'] }}"
