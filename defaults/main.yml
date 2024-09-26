@@ -1,16 +1,17 @@
 ---
 # yamllint disable rule:line-length
-# Allowed services, defaults come from a RHEL8 installation
+# Allowed services in public zone, defaults come from a RHEL8 installation
 firewalld_services:
   - 'cockpit'
   - 'dhcpv6-client'
   - 'ssh'  # Also hardcoded by this role to prevent lockouts
 
-# Allowed non-service ports
+# Allowed non-service ports in public zone
 firewalld_ports: []
 #  - '443/tcp'
 #  - '161-162/udp'
 
+# Rich rules in public zone
 firewalld_rich_rules: []
 # - 'rule family=ipv4 forward-port port=443 protocol=tcp to-port=8443'
 

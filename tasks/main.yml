@@ -22,7 +22,17 @@
       ansible.posix.firewalld_info:
       register: 'firewalld_config'
 
-    - name: 'Prune zones'
+    - name: 'Disable unknown zones'
+      ansible.posix.firewalld:
+        zone: "{{ zone }}"
+        permanent: true
+        state: 'disabled'
+      loop: "{{ firewalld_config['collected_zones'] }}"
+      loop_control:
+        loop_var: 'zone'
+      when: zone not in firewalld_zones.keys()
+
+    - name: 'Prune managed zones'
       ansible.builtin.include_tasks: 'tasks/prune_zone.yml'
       loop: "{{ firewalld_zones.keys() }}"
       loop_control:
