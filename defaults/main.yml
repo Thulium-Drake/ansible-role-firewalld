@@ -4,7 +4,7 @@
 firewalld_services:
   - 'cockpit'
   - 'dhcpv6-client'
-  - 'ssh'  # Also hardcoded by this role to prevent lockouts
+  - 'ssh'
 
 # Allowed non-service ports in public zone
 firewalld_ports: []

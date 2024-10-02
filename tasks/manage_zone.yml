@@ -46,7 +46,7 @@
     immediate: true
     permanent: true
     state: 'enabled'
-  loop: "{{ firewalld_zones[zone]['services'] + ['ssh'] }}"
+  loop: "{{ firewalld_zones[zone]['services'] }}"
   loop_control:
     loop_var: 'service'
 

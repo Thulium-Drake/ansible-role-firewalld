@@ -9,6 +9,20 @@
     name: 'firewalld'
     state: 'started'
 
+- name: 'Sanity check to prevent lockouts'
+  block:
+    - name: 'Checking zones for ssh service'
+      ansible.builtin.assert:
+        that:
+          - "'ssh' in item['value']['services']"
+      loop: "{{ lookup('ansible.builtin.dict', firewalld_zones) }}"
+      register: 'zone_config'
+  rescue:
+    - name: 'Assert that at least one zone contains ssh'
+      ansible.builtin.assert:
+        that:
+          - zone_config['results'] | selectattr('failed', 'equalto', false) | length >= 1
+
 - name: 'Manage zones'
   ansible.builtin.include_tasks: 'tasks/manage_zone.yml'
   loop: "{{ firewalld_zones.keys() }}"
