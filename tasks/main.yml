@@ -51,3 +51,9 @@
       loop: "{{ firewalld_zones.keys() }}"
       loop_control:
         loop_var: 'zone'
+
+- name: 'Set default zone'
+  ansible.builtin.command: firewall-cmd --set-default-zone={{ firewalld_default_zone }}
+  register: default_zone
+  changed_when: "'ZONE_ALREADY_SET' not in default_zone['stderr']"
+  notify: 'Reload firewalld config'

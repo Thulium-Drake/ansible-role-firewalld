@@ -3,7 +3,7 @@ This role provides a means to statefully control host firewalls running Firewall
 
 It can configure:
 
-  * Zones: create new ones, set targets and configure masquerading
+  * Zones: create new ones, set targets and configure masquerading and set the default (fallback) zone for non-matching traffic
   * Bind interfaces to zones
   * Allow Ports and Services
   * Set Rich rules

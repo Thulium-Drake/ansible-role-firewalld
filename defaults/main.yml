@@ -18,6 +18,10 @@ firewalld_rich_rules: []
 # Clear out any opened ports and/or services that are not defined by this role
 firewalld_prune_unknown: true
 
+# Which zone to use when no zones match
+# NOTE: Set to 'drop' when you want a default-deny firewall, the setting below is the default on RHEL
+firewalld_default_zone: 'public'
+
 # Firewall zone configuration structure
 # The default configuration is combined from the config items above, but you
 # can have Ansible compose a similar structure with the following lookup:
