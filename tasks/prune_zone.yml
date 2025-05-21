@@ -58,3 +58,15 @@
   loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['sources'] }}"
   loop_control:
     loop_var: 'source'
+
+- name: "{{ zone }} - Remove all unknown interfaces from zone"  # noqa name[template]
+  ansible.posix.firewalld:
+    interface: "{{ interface }}"
+    zone: "{{ zone }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  when: interface not in firewalld_zones[zone]['interfaces']
+  loop: "{{ firewalld_config['firewalld_info']['zones'][zone]['interfaces'] }}"
+  loop_control:
+    loop_var: 'interface'
