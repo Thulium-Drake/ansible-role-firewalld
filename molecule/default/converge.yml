@@ -15,7 +15,7 @@
         port_forwards:
           - port: 80
             proto: 'tcp'
-            toport: '8000'
+            toport: 8000
         sources:
           - '10.0.0.0/8'
     dhcpd_firewalld_zones__to_merge:
@@ -32,7 +32,7 @@
         port_forwards:
           - port: 82
             proto: 'tcp'
-            toport: '8002'
+            toport: 8002
         sources:
           - '192.168.1.0/24'
           - '192.168.2.0/24'

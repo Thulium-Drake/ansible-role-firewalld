@@ -32,7 +32,7 @@
         {% set forward_dict = {
           'port': forward[0] | int,
           'proto': forward[1],
-          'toport': forward[2]
+          'toport': forward[2] | int
         } -%}
         {% if forward[3] != '' -%}
           {% set _ = forward_dict.update({'toaddr': forward[3]}) -%}
