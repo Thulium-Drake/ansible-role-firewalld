@@ -24,6 +24,35 @@
   loop_control:
     loop_var: 'port'
 
+- name: "{{ zone }} - Find port forwards to remove"  # noqa name[template]
+  ansible.builtin.set_fact:
+    port_forwards_to_remove: >-
+      {% set current = [] -%}
+      {% for forward in firewalld_config['firewalld_info']['zones'][zone]['forward_ports'] -%}
+        {% set forward_dict = {
+          'port': forward[0] | int,
+          'proto': forward[1],
+          'toport': forward[2]
+        } -%}
+        {% if forward[3] != '' -%}
+          {% set _ = forward_dict.update({'toaddr': forward[3]}) -%}
+        {% endif -%}
+        {% set _ = current.append(forward_dict) -%}
+      {% endfor -%}
+      {{ current | difference(firewalld_zones[zone]['port_forwards'] | default([])) }}
+
+- name: "{{ zone }} - Remove unwanted port forwards"  # noqa name[template]
+  ansible.posix.firewalld:
+    port_forward:
+      - "{{ port_forward }}"
+    zone: "{{ zone }}"
+    state: 'disabled'
+    immediate: true
+    permanent: true
+  loop: "{{ port_forwards_to_remove }}"
+  loop_control:
+    loop_var: 'port_forward'
+
 - name: "{{ zone }} - Remove all unknown rich rules from zone"  # noqa name[template]
   ansible.posix.firewalld:
     rich_rule: "{{ rule }}"

@@ -61,6 +61,18 @@
   loop_control:
     loop_var: 'port'
 
+- name: "{{ zone }} - Ensure port forwards"  # noqa name[template]
+  ansible.posix.firewalld:
+    zone: "{{ zone }}"
+    port_forward:
+      - "{{ port_forward }}"
+    immediate: true
+    permanent: true
+    state: 'enabled'
+  loop: "{{ firewalld_zones[zone]['port_forwards'] | default([]) }}"
+  loop_control:
+    loop_var: 'port_forward'
+
 - name: "{{ zone }} - Ensure rich rules"  # noqa name[template]
   ansible.posix.firewalld:
     zone: "{{ zone }}"

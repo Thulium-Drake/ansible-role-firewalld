@@ -6,6 +6,7 @@ It can configure:
   * Zones: create new ones, set targets and configure masquerading and set the default (fallback) zone for non-matching traffic
   * Bind interfaces to zones
   * Allow Ports and Services
+  * Set port forwards (see ansible.posix.firewalld module docs for argument spec)
   * Set Rich rules
   * Configure source networks for zones
 
@@ -15,7 +16,6 @@ NOTE: when configured to remove unknown configuration it will also remove 'proto
 
 Limitations:
 * The role does not support direct rules in FirewallD, as the Ansible modules used also do not support them.
-* FirewallD port forwards are only supported using rich rules (the port_forwards setup in the module is weird...)
 * When pruning is enabled, take your time to check how your rich rule is saved, the order of the arguments matters in detecting 'rogue' rules to prune.
 
 # Usage
